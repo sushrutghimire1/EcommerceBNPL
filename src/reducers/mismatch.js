@@ -1,12 +1,12 @@
 import {
-    FETCH_FEATURE,
+    FETCH_MISMATCH
 } from '../actions/types';
 
 export const reducer = (state = {}, action) => {
 
     switch (action.type) {
-        case FETCH_FEATURE:
-            return { ...state, description: action.payload}
+        case FETCH_MISMATCH:
+            return{ ...state, mismatch: action.payload}
         default:
             return state;
     }
