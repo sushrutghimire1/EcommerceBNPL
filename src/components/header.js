@@ -23,9 +23,12 @@ class Header extends PureComponent {
     render() {
         return (
             <nav className="navbar navbar-toggleable-md navbar-light bg-faded">
-                <Link to="/" className="navbar-brand">Redux Auth</Link>
+                <Link to="/" className="navbar-brand">My Assignment</Link>
 
                 <ul className="navbar-nav">
+                    <li className="nav-item">
+                    <Link className="nav-link" to="/reconciliation">Profile</Link>
+                    </li>
                     {this.renderLinks()}
                 </ul>
             </nav>

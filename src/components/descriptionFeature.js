@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown' 
 
-class Feature3 extends PureComponent {
+class Description extends PureComponent {
 
     constructor(props) {
         super(props);
@@ -36,15 +36,15 @@ class Feature3 extends PureComponent {
 
 
     handleFormSubmit() {
-        History.push('/feature4');
+        History.push('/download');
     }
 
     handleBack() {
-        History.push('/feature2');
+        History.push('/target');
     }
 
     handleCancel() {
-        History.push('/feature');
+        History.push('/source');
     }
 
     handleSelect=(e)=>{
@@ -124,5 +124,5 @@ const mapStateToProps = (state) => {
 
 export default reduxForm({
     form: 'feature'
-})(connect(mapStateToProps, actions)(Feature3));
+})(connect(mapStateToProps, actions)(Description));
 

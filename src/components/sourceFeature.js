@@ -2,13 +2,12 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 import { Field, reduxForm } from 'redux-form';
-import History from '../history.js';
-import { post } from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown' 
+import Dropdown from 'react-bootstrap/Dropdown'; 
+import History from '../history.js';
 
-class Feature extends PureComponent {
+class Source extends PureComponent {
 
     constructor(props){
         super(props);
@@ -18,8 +17,6 @@ class Feature extends PureComponent {
             source:''
           }
         this.onChange = this.onChange.bind(this)
-        this.csvFileUpload = this.csvFileUpload.bind(this);
-        this.jsonFileUpload = this.jsonFileUpload.bind(this);
     }
 
     onChange(e) {
@@ -27,76 +24,15 @@ class Feature extends PureComponent {
       }
 
     handleFormSubmit(event) {
-        console.log(this.state.file.name)
-        console.log(this.state.source)
-        this.updateSourceDescription().then((response) => {
-            console.log(response.data);
-        });
+        History.push('/target');
+        this.props.updateSourceDescription(this.state.source,this.state.selectedType,this.state.file.name);
         if(this.state.selectedType == 'csv')
-        this.onCsvFormSubmit(event);
+        this.props.uploadSourceCSV(this.state.file);
         else if(this.state.selectedType == 'json')
-        this.onJsonFormSubmit(event);
-        History.push('/feature2');
+        this.props.uploadSourceJson(this.state.file);
     }
 
-    onCsvFormSubmit(e){
-        e.preventDefault();
-        this.csvFileUpload(this.state.file).then((response)=>{
-          console.log(response.data);
-        })
-      }
-
-      onJsonFormSubmit(e){
-        e.preventDefault();
-        this.jsonFileUpload(this.state.file).then((response)=>{
-          console.log(response.data);
-        })
-      }
-
-      csvFileUpload(file){
-        console.log(file)
-        const url = 'http://localhost:8080/csv-source/upload';
-        const formData = new FormData();
-        formData.append('file',file)
-        const config = {
-            headers: {
-                'part_content_type':'text/csv',
-                Authorization: 'Bearer '+localStorage.getItem('token'),
-            }
-        }
-        return  post(url, formData,config)
-      }
-
-      jsonFileUpload(file){
-        console.log(file)
-        const url = 'http://localhost:8080/json-source/upload';
-        const formData = new FormData();
-        formData.append('file',file)
-        const config = {
-            headers: {
-                Authorization: 'Bearer '+localStorage.getItem('token'),
-            }
-        }
-        return  post(url, formData,config)
-      }
-
-      updateSourceDescription(){
-        const url = 'http://localhost:8080/source';
-
-        const config = {
-            headers: {
-                Authorization: 'Bearer '+localStorage.getItem('token'),
-            }
-        }
-        return  post(url, 
-            {
-            sourceName: this.state.source,
-            fileType: this.state.selectedType,
-            fileName: this.state.file.name
-        },config);
-      }
-
-      handleSelect=(e)=>{
+    handleSelect=(e)=>{
         this.setState({ selectedType: e })
     }
 
@@ -140,5 +76,5 @@ const mapStateToProps = () => {
 
 export default reduxForm({
     form: 'feature'
-})(connect(mapStateToProps, actions)(Feature));
+})(connect(mapStateToProps, actions)(Source));
 
