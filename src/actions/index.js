@@ -83,6 +83,7 @@ export const fetchDescriptionFeature = () => {
                 });
             }).catch(({ response }) => { 
                 if(response.status=="403"){
+                    dispatch({ type: AUTH_ERROR });
                     History.push('/');
                 } 
             });
@@ -101,6 +102,7 @@ export const fetchReconciliationFeature = () => {
                 });
             }).catch(({ response }) => { 
                 if(response.status=="403"){
+                    dispatch({ type: AUTH_ERROR });
                     History.push('/');
                 } 
             });
@@ -121,6 +123,7 @@ export const fetchMismatch = () => {
                 });
             }).catch(({ response }) => { 
                 if(response.status=="403"){
+                    dispatch({ type: AUTH_ERROR });
                     History.push('/');
                 } 
             });
@@ -139,6 +142,7 @@ export const fetchMatch = () => {
                 });
             }).catch(({ response }) => { 
                 if(response.status=="403"){
+                    dispatch({ type: AUTH_ERROR });
                     History.push('/');
                 } 
             });
@@ -157,6 +161,7 @@ export const fetchMissing = () => {
                 });
             }).catch(({ response }) => { 
                 if(response.status=="403"){
+                    dispatch({ type: AUTH_ERROR });
                     History.push('/');
                 } 
             });
@@ -177,6 +182,7 @@ export const uploadTargetJson = (file) => {
                 });
             }).catch(({ response }) => { 
                 if(response.status=="403"){
+                    dispatch({ type: AUTH_ERROR });
                     History.push('/');
                 } 
             });
@@ -197,6 +203,7 @@ export const uploadSourceJson = (file) => {
                 });
             }).catch(({ response }) => { 
                 if(response.status=="403"){
+                    dispatch({ type: AUTH_ERROR });
                     History.push('/');
                 } 
             });
@@ -216,6 +223,7 @@ export const uploadTargetCSV = (file) => {
                 });
             }).catch(({ response }) => { 
                 if(response.status=="403"){
+                    dispatch({ type: AUTH_ERROR });
                     History.push('/');
                 } 
             });
@@ -236,6 +244,7 @@ export const uploadSourceCSV = (file) => {
                 });
             }).catch(({ response }) => { 
                 if(response.status=="403"){
+                    dispatch({ type: AUTH_ERROR });
                     History.push('/');
                 } 
             });
@@ -277,9 +286,11 @@ export const updateTargetDescription = (source, selectedType, fileName) => {
             {
                 headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
             }).then(response => {
+                if(response.status=="200"){
                 dispatch({
                     type: UPDATE_TARGET_DESC
                 });
+            }
             }).catch(({ response }) => { 
                 if(response.status=="403"){
                     History.push('/');
