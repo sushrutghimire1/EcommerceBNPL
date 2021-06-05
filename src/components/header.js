@@ -4,6 +4,16 @@ import { Link } from 'react-router-dom';
 
 class Header extends PureComponent {
 
+    renderHome() {
+        if (this.props.authenticated) {
+            return (
+                <li className="nav-item">
+                    <Link className="nav-link" to="/source">Upload</Link>
+                </li>
+            );
+        }
+    }
+
     renderLinks() {
         if (this.props.authenticated) {
             return (
@@ -26,8 +36,9 @@ class Header extends PureComponent {
                 <Link to="/" className="navbar-brand">My Assignment</Link>
 
                 <ul className="navbar-nav">
+                    {this.renderHome()}
                     <li className="nav-item">
-                    <Link className="nav-link" to="/reconciliation">Profile</Link>
+                        <Link className="nav-link" to="/reconciliation">Reconciliation</Link>
                     </li>
                     {this.renderLinks()}
                 </ul>

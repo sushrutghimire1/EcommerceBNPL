@@ -10,10 +10,7 @@ import { AUTH_USER } from './actions/types';
 
 import rootReducer from './reducers';
 
-import './style/style.css';
-
 import registerServiceWorker from './registerServiceWorker';
-import { Height } from '@material-ui/icons';
 
 /*
 // UNCOMMENT IT FOR PRODUCTION

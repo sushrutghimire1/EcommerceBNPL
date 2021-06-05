@@ -1,12 +1,14 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import { Field, reduxForm } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import History from '../history.js';
 import { Table } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown'
+import { Redirect } from 'react-router';
+import _ from 'lodash';
 
 class Description extends PureComponent {
 
@@ -22,30 +24,10 @@ class Description extends PureComponent {
         }
     }
 
-    componentWillMount() {
-        this.props.fetchDescriptionFeature();
-    }
 
-    componentDidMount(){
-        this.interval = setInterval(() => this.setState({ time: Date.now() }), 1000);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.interval)
-    }
-
-    getSafe(fn, defaultVal) {
-        try {
-            return fn();
-        } catch (e) {
-            return defaultVal;
-        }
-    }
-
-
-
-    handleFormSubmit() {
-        History.push('/download');
+    handleFormSubmit(event) {
+        event.preventDefault();
+        this.props.uploadFiles(this.props.sourceDescription, this.props.targetDescription);
     }
 
     handleBack() {
@@ -60,10 +42,22 @@ class Description extends PureComponent {
         this.setState({ selectedType: e })
     }
 
+    renderLoading() {
+        if (this.props.filesUploaded === false)
+            return <div style={{ color: 'green' }}>Uploading...</div>
+        else if (this.props.errorOccured)
+            return <div style={{ color: 'red' }}>Error occured while uploading...</div>
+        else return <div></div>
+    }
+
     render() {
-        if (this.props.targetDescUpdated && (this.props.targetJsonUpdated || this.props.targetCsvUpdated)
-            || (this.props.targetDescUpdated == undefined && this.props.targetCSVUpdated == undefined
-                && this.props.targetJsonUpdated == undefined)) {
+        console.log(this.state)
+        if (this.props.filesUploaded === true) {
+            return <Redirect to='/download' />
+        }
+        if (_.isEmpty(this.props.sourceDescription) || _.isEmpty(this.props.targetDescription)) {
+            return <Redirect to='/source' />
+        } else {
             return (
                 <div style={{ width: "50%" }}>
                     <form onSubmit={this.handleFormSubmit.bind(this)}>
@@ -77,11 +71,11 @@ class Description extends PureComponent {
                                 <tbody>
                                     <tr>
                                         <td>Name:</td>
-                                        <td>{this.getSafe(() => this.props.feature.description.sourceName)}</td>
+                                        <td>{this.props.sourceDescription.source}</td>
                                     </tr>
                                     <tr>
                                         <td>Type:</td>
-                                        <td>{this.getSafe(() => this.props.feature.description.sourceFileType)}</td>
+                                        <td>{this.props.sourceDescription.sourceSelectedType}</td>
                                     </tr>
                                 </tbody>
                             </Table>
@@ -98,11 +92,11 @@ class Description extends PureComponent {
                                 <tbody>
                                     <tr>
                                         <td>Name:</td>
-                                        <td>{this.getSafe(() => this.props.feature.description.targetName)}</td>
+                                        <td>{this.props.targetDescription.target}</td>
                                     </tr>
                                     <tr>
                                         <td>Type:</td>
-                                        <td>{this.getSafe(() => this.props.feature.description.targetFileType)}</td>
+                                        <td>{this.props.targetDescription.targetSelectedType}</td>
                                     </tr>
                                 </tbody>
                             </Table>
@@ -124,14 +118,8 @@ class Description extends PureComponent {
                         <button className="btn" onClick={this.handleCancel.bind(this)}>Cancel</button>
                         <button className="btn" onClick={this.handleBack.bind(this)}>Back</button>
                         <button action="submit" className="btn btn-primary" >Compare</button>
+                        {this.renderLoading()}
                     </form>
-                </div>
-            );
-        } else {
-            return (
-                <div>
-                    <div>Updating Target File...</div>
-                    <button className="btn btn-primary" style={{ marginTop: '20px' }} onClick={this.handleBack.bind(this)}>Back</button>
                 </div>
             );
         }
@@ -140,12 +128,14 @@ class Description extends PureComponent {
 
 const mapStateToProps = (state) => {
     return {
-        feature: state.descriptions,
-        targetJsonUpdated: state.targetJson.targetJsonUpdated,
-        targetCsvUpdated: state.targetCsv.targetCsvUpdated,
-        targetDescUpdated: state.targetDesc.targetDescUpdated,
+        targetDescription: state.targetDesc.target,
+        sourceDescription: state.sourceDesc.source,
+        filesUploaded: state.filesUpload.filesUpdated,
+        errorOccured: state.filesUpload.fileError
     }
 }
+
+
 
 export default reduxForm({
     form: 'feature'

@@ -30,22 +30,14 @@ class Download extends PureComponent {
     }
 
     handleCancel() {
+        this.props.resetFileDescriptions();
+        this.props.resetSourceDescriptions();
+        this.props.resetTargetDescriptions();
         History.push('/source');
     }
 
-    componentWillMount() {
-        this.props.fetchMismatch();
-        this.props.fetchMissing();
-        this.props.fetchMatch();
-    }
-
-
-    getSafe(fn) {
-        try {
-            return fn();
-        } catch (e) {
-            return;
-        }
+    componentDidMount() {
+        this.props.fetchResult(this.props.id);
     }
 
     renderRow(array1) {
@@ -75,40 +67,40 @@ class Download extends PureComponent {
 
     }
 
-    renderSpecificTab() {
+    renderSpecificTab(resultFiles) {
         if (this.state.value == "1")
-            return this.renderRow(this.props.match.match)
+            return this.renderRow(resultFiles.matching)
         else if (this.state.value == "2")
-            return this.renderRow(this.props.mismatch.mismatch)
+            return this.renderRow(resultFiles.mismatching)
         else if (this.state.value == "3")
-            return this.renderRow(this.props.missing.missing)
+            return this.renderRow(resultFiles.missing)
     }
 
-    downloadCsv() {
+    downloadCsv(resultFiles) {
         if (this.state.value == "1") {
-            if (this.props.match.match != undefined) {
-                this.setState({ data: this.props.match.match })
+            if (resultFiles.matching != undefined) {
+                this.setState({ data: resultFiles.matching })
                 return <CSVLink data={this.state.data} headers={this.state.headers} filename={"Match-Result.csv"}>CSV</CSVLink>;
             }
         }
         else if (this.state.value == "2") {
-            if (this.props.mismatch.mismatch != undefined) {
-                this.setState({ data: this.props.mismatch.mismatch })
+            if (resultFiles.mismatching != undefined) {
+                this.setState({ data: resultFiles.mismatching })
                 return <CSVLink data={this.state.data} headers={this.state.headers} filename={"Mismatch-Result.csv"}>CSV</CSVLink>;
             }
         }
         else if (this.state.value == "3") {
-            if (this.props.missing.missing != undefined) {
-                this.setState({ data: this.props.missing.missing })
+            if (this.props.resultFiles.missing != undefined) {
+                this.setState({ data: resultFiles.missing })
                 return <CSVLink data={this.state.data} headers={this.state.headers} filename={"Missing-Result.csv"}>CSV</CSVLink>;
             }
         }
     }
 
-    downloadJson() {
+    downloadJson(resultFiles) {
         if (this.state.value == "1") {
-            if (this.props.match.match != undefined) {
-                var match = this.props.match.match.map((element)=>{
+            if (resultFiles.matching != undefined) {
+                var match = resultFiles.matching.map((element) => {
                     delete element.username;
                     return element;
                 })
@@ -122,8 +114,8 @@ class Download extends PureComponent {
             }
         }
         else if (this.state.value == "2") {
-            if (this.props.mismatch.mismatch != undefined) {
-                var mismatch = this.props.mismatch.mismatch.map((element)=>{
+            if (resultFiles.mismatching != undefined) {
+                var mismatch = resultFiles.mismatching.map((element) => {
                     delete element.username;
                     return element;
                 })
@@ -134,11 +126,11 @@ class Download extends PureComponent {
                     download="Mismatch-Result.json">
                     JSON
                 </a>);
-                }
+            }
         }
         else if (this.state.value == "3") {
-            if (this.props.missing.missing != undefined) {
-                var missing = this.props.missing.missing.map((element)=>{
+            if (resultFiles.missing != undefined) {
+                var missing = resultFiles.missing.map((element) => {
                     delete element.username;
                     return element;
                 })
@@ -149,12 +141,12 @@ class Download extends PureComponent {
                     download="Missing-Result.json">
                     JSON
                 </a>);
-                }
+            }
         }
     }
-        
 
-    renderTable() {
+
+    renderTable(resultFiles) {
         return (
             <Table hover bordered>
                 <thead>
@@ -166,7 +158,7 @@ class Download extends PureComponent {
                         <th>Value Date</th>
                     </tr>
                 </thead>
-                {this.renderSpecificTab()}
+                {this.renderSpecificTab(resultFiles)}
             </Table >
         );
     }
@@ -179,7 +171,7 @@ class Download extends PureComponent {
                 <form>
 
                     <TabContext value={this.state.value}>
-                        <AppBar position="static" style={{ width: '43%' }}>
+                        <AppBar position="static" style={{ width: '100%' }}>
                             <TabList aria-label="simple tabs example">
                                 <Tab label="Match" value="1" onClick={() => this.setState({ value: "1" })} />
                                 <Tab label="Mismatch" value="2" onClick={() => this.setState({ value: "2" })} />
@@ -187,10 +179,10 @@ class Download extends PureComponent {
                             </TabList>
                         </AppBar>
                         <TabPanel value="1">
-                            {this.renderTable()}
+                            {this.renderTable(this.props.resultFiles)}
                         </TabPanel>
-                        <TabPanel value="2">{this.renderTable()}</TabPanel>
-                        <TabPanel value="3">{this.renderTable()}</TabPanel>
+                        <TabPanel value="2">{this.renderTable(this.props.resultFiles)}</TabPanel>
+                        <TabPanel value="3">{this.renderTable(this.props.resultFiles)}</TabPanel>
                     </TabContext>
 
 
@@ -203,8 +195,8 @@ class Download extends PureComponent {
                                     Download
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem>{this.downloadCsv()}</DropdownItem>
-                                    <DropdownItem>{this.downloadJson()}</DropdownItem>
+                                    <DropdownItem>{this.downloadCsv(this.props.resultFiles)}</DropdownItem>
+                                    <DropdownItem>{this.downloadJson(this.props.resultFiles)}</DropdownItem>
                                 </DropdownMenu>
                             </ButtonDropdown>
                         </div>
@@ -215,8 +207,12 @@ class Download extends PureComponent {
     }
 }
 
+
 const mapStateToProps = (state) => {
-    return { match: state.match, mismatch: state.mismatch, missing: state.missing }
+    return {
+        id: state.filesUpload.id,
+        resultFiles: state.resultFiles
+    }
 }
 
 export default reduxForm({

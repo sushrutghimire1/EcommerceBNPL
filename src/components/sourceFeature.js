@@ -1,24 +1,36 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions';
 import { Field, reduxForm } from 'redux-form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import History from '../history.js';
+import * as actions from '../actions';
+import _ from 'lodash';
 
 class Source extends PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = {
-            file: null,
-            selectedType: 'csv',
-            source: null,
-            showError: false
+        if (!_.isEmpty(this.props.sourceDescription)) {
+            console.log(this.props.sourceDescription)
+            this.state = {
+                file: this.props.sourceDescription.sourceFile,
+                selectedType: this.props.sourceDescription.sourceSelectedType,
+                source: this.props.sourceDescription.source,
+                showError: false
+            }
+        } else {
+            this.state = {
+                file: null,
+                selectedType: 'csv',
+                source: '',
+                showError: false
+            }
         }
         this.onChange = this.onChange.bind(this)
         this.showErrors = this.showErrors.bind(this)
+        this.handleFormSubmit = this.handleFormSubmit.bind(this)
     }
 
     onChange(e) {
@@ -27,14 +39,16 @@ class Source extends PureComponent {
 
     handleFormSubmit(event) {
         event.preventDefault();
-        if (this.state.file !== null && this.state.source !==null) {
-            console.log('came here')
+        console.log(this.state)
+        if (this.state.file && this.state.source) {
+            var sourceObject = {
+                source: this.state.source,
+                sourceSelectedType: this.state.selectedType,
+                sourceFileName: this.state.file.name,
+                sourceFile: this.state.file
+            }
+            this.props.updateSourceDescription(sourceObject);
             History.push('/target');
-            this.props.updateSourceDescription(this.state.source, this.state.selectedType, this.state.file.name);
-            if (this.state.selectedType == 'csv')
-                this.props.uploadSourceCSV(this.state.file);
-            else if (this.state.selectedType == 'json')
-                this.props.uploadSourceJson(this.state.file);
         } else {
             this.setState({ showError: true });
         }
@@ -58,9 +72,9 @@ class Source extends PureComponent {
             <div style={{ width: "50%" }}>
                 <form onSubmit={this.handleFormSubmit.bind(this)}>
                     <fieldset className="form-group">
-                        <label>Source Name:</label>
-                        <Field className="form-control" value={this.state.source} name="sourcename"
-                            onChange={(e) => this.setState({ source: e.target.value })} component="input" type="text" />
+                        <label>Source Name:</label><br />
+                        <input type="text" value={this.state.source}
+                            onChange={(e) => this.setState({ source: e.target.value })} />
                     </fieldset>
                     <fieldset className="form-group">
                         <label>File Type:</label>
@@ -78,6 +92,7 @@ class Source extends PureComponent {
                     </fieldset>
                     <fieldset className="form-group">
                         <label>File:</label><br />
+                        {this.state.file && <div style={{ color: 'green' }}>{this.state.file.name} Uploaded</div>}
                         <input type="file" onChange={this.onChange} />
                     </fieldset>
                     {this.showErrors()}
@@ -88,8 +103,10 @@ class Source extends PureComponent {
     }
 }
 
-const mapStateToProps = () => {
-    return {};
+const mapStateToProps = (state) => {
+    return {
+        sourceDescription: state.sourceDesc.source
+    };
 }
 
 export default reduxForm({

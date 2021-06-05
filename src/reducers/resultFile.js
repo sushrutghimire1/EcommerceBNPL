@@ -1,12 +1,12 @@
 import {
-    UPLOAD_TARGET_CSV,
+    FETCH_RESULT
 } from '../actions/types';
 
 export const reducer = (state = {}, action) => {
 
     switch (action.type) {
-        case UPLOAD_TARGET_CSV:
-            return { ...state, targetCsvUpdated: true }
+        case FETCH_RESULT:
+            return{ ...state, ...action.payload}
         default:
             return state;
     }
