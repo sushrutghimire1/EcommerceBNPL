@@ -8,7 +8,17 @@ class Header extends PureComponent {
         if (this.props.authenticated) {
             return (
                 <li className="nav-item">
-                    <Link className="nav-link" to="/source">Upload</Link>
+                    <Link className="nav-link" to="/source">Home</Link>
+                </li>
+            );
+        }
+    }
+
+    renderLoginActivity() {
+        if (this.props.authenticated) {
+            return (
+                <li className="nav-item">
+                    <Link className="nav-link" to="/loginactivity">Login Activity</Link>
                 </li>
             );
         }
@@ -37,6 +47,7 @@ class Header extends PureComponent {
 
                 <ul className="navbar-nav">
                     {this.renderHome()}
+                    {this.renderLoginActivity()}
                     <li className="nav-item">
                         <Link className="nav-link" to="/reconciliation">Reconciliation</Link>
                     </li>

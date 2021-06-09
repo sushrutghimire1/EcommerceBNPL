@@ -10,6 +10,7 @@ import Target from '../components/targetFeature';
 import Description from '../components/descriptionFeature';
 import Download from '../components/downloadFeature';
 import Reconciliation from '../components/reconciliationFeature'
+import LoginActivity from '../components/loginActivityFeature'
 
 const Routes = () => {
     return (
@@ -23,6 +24,7 @@ const Routes = () => {
             <Route exact path="/description" component={RequireAuth(Description)} />
             <Route exact path="/download" component={RequireAuth(Download)} />
             <Route exact path="/reconciliation" component={RequireAuth(Reconciliation)} />
+            <Route exact path="/loginactivity" component={RequireAuth(LoginActivity)} />
         </App>
     );
 };

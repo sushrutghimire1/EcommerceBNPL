@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 var _ = require('lodash/core');
 
-class Reconciliation extends PureComponent {
+class LoginActivity extends PureComponent {
 
 
     constructor(props) {
@@ -50,38 +50,6 @@ class Reconciliation extends PureComponent {
         }
 
     }
-    onCompareViewClick(id){
-        this.props.updateFileId(id);
-    }
-
-    renderCompareRow(array1) {
-        if (_.isEmpty(array1)) {
-            return (<tr><th colSpan="5">No results found</th></tr>)
-        }
-        else {
-            if (array1 != undefined) {
-                var i = 1;
-                const array2 = array1.map(element => {
-                    if (element.action == 'COMPARE') {
-                        return (
-                            <tbody key={i}>
-                                <tr>
-                                    <td>{i++}</td>
-                                    <td>{element.action}</td>
-                                    <td>{element.timestamp.substring(0, 19)}</td>
-                                    <td>
-                                    <Link to="/download" onClick={this.onCompareViewClick(element.id)}>View</Link>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        );
-                    }
-                });
-                return array2;
-            }
-        }
-
-    }
 
     renderLoginTable() {
         return (
@@ -97,28 +65,10 @@ class Reconciliation extends PureComponent {
             </Table >);
     }
 
-    renderCompareTable() {
-        return (
-            <Table hover bordered>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Action</th>
-                        <th>Time Stamp</th>
-                    </tr>
-                </thead>
-                {this.renderCompareRow(this.props.reconciliations.reconciliation)}
-            </Table >);
-    }
-
-    
-
-    toggle = () => this.setState({ dropdownOpen: !this.state.dropdownOpen });
-
     render() {
         return (
             <div>
-                {this.renderCompareTable()}
+                {this.renderLoginTable()}
             </div>
         );
     }
@@ -128,5 +78,5 @@ const mapStateToProps = (state) => {
     return { reconciliations: state.reconciliation }
 }
 
-export default connect(mapStateToProps, actions)(Reconciliation);
+export default connect(mapStateToProps, actions)(LoginActivity);
 
