@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Logo from '../icons/flexmoney.jpeg'
 
 class Header extends PureComponent {
 
@@ -43,14 +44,10 @@ class Header extends PureComponent {
     render() {
         return (
             <nav className="navbar navbar-toggleable-md navbar-light bg-faded">
-                <Link to="/" className="navbar-brand">My Assignment</Link>
+                <Link to="/" className="navbar-brand"><img src={Logo} alt="Logo" height={50} width={100}/></Link>
 
                 <ul className="navbar-nav">
                     {this.renderHome()}
-                    {this.renderLoginActivity()}
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/reconciliation">Reconciliation</Link>
-                    </li>
                     {this.renderLinks()}
                 </ul>
             </nav>

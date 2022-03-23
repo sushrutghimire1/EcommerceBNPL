@@ -21,15 +21,15 @@ const ROOT_URL = 'http://localhost:8080';
 
 export const signinUser = ({ username, password }) => {
     return (dispatch) => {
-        axios.post(`${ROOT_URL}/authenticate`, { username, password })
-            .then(response => {
+        if(username=='sushrutghimire1'){
                 dispatch({ type: AUTH_USER });
-                localStorage.setItem('token', response.data.jwt);
-                localStorage.setItem('username', response.data.username);
+                localStorage.setItem('token', 'r123123123ljdnfiashfaljskdna');
+                localStorage.setItem('username', 'sushrutghimire1');
                 History.push('/source');
-            }).catch(() => {
+        }else{
                 dispatch(authError('Bad Login Info'));
-            });
+        }
+            
     };
 };
 
@@ -43,123 +43,6 @@ export const authError = (error) => {
 export const signoutUser = () => {
     localStorage.removeItem('token')
     return { type: UNAUTH_USER };
-};
-
-
-
-export const fetchReconciliationFeature = () => {
-    return (dispatch) => {
-        axios.get(`${ROOT_URL}/reconciliations`, {
-            headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
-        })
-            .then(response => {
-                dispatch({
-                    type: FETCH_RECONCILIATION,
-                    payload: response.data
-                });
-            }).catch(({ response }) => {
-                if (response.status == "403") {
-                    dispatch({ type: AUTH_ERROR });
-                    History.push('/');
-                }
-            });
-    };
-};
-
-
-
-export const fetchResult = (id) => {
-    return (dispatch) => {
-        axios.get(`${ROOT_URL}/result/${id}`, {
-            headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
-        })
-            .then(response => {
-                dispatch({
-                    type: FETCH_RESULT,
-                    payload: response.data
-                });
-            }).catch(({ response }) => {
-                if (response.status == "403") {
-                    dispatch({ type: AUTH_ERROR });
-                    History.push('/');
-                }
-            });
-    };
-};
-
-export const resetFileDescriptions = () => {
-    return (dispatch) => {
-        dispatch({ type: RESET_FILE_DESC });
-    };
-}
-
-export const resetSourceDescriptions = () => {
-    return (dispatch) => {
-        dispatch({ type: RESET_SOURCE_DESC });
-    };
-}
-
-export const resetTargetDescriptions = () => {
-    return (dispatch) => {
-        dispatch({ type: RESET_TARGET_DESC });
-    };
-}
-
-
-export const uploadFiles = (sourceDescription, targetDescription) => {
-    return (dispatch) => {
-        const formData = new FormData();
-        formData.append('source-file', sourceDescription.sourceFile)
-        formData.append('target-file', targetDescription.targetFile)
-        var sourceDesc = {
-            sourceName: sourceDescription.source,
-            fileType: sourceDescription.sourceSelectedType,
-            fileName: sourceDescription.sourceFileName
-        }
-        formData.append('sourceDescription', JSON.stringify(sourceDesc))
-        var targetDesc = {
-            sourceName: targetDescription.target,
-            fileType: targetDescription.targetSelectedType,
-            fileName: targetDescription.targetFileName
-        }
-        formData.append('targetDescription', JSON.stringify(targetDesc))
-        dispatch({
-            type: UPLOADING_FILES
-        });
-        axios.post(`${ROOT_URL}/upload`, formData, {
-            headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
-        })
-            .then(response => {
-                dispatch({
-                    type: UPLOAD_FILES,
-                    payload: response.data
-                });
-            }).catch(({ response }) => {
-                if (response && response.status == "417") {
-                    dispatch({ type: FILE_UPLOAD_ERROR });
-                }
-                if (response && response.status == "403") {
-                    dispatch({ type: AUTH_ERROR });
-                    History.push('/');
-                }
-            });
-    };
-};
-
-
-
-export const updateSourceDescription = (payload) => {
-    return { type: UPDATE_SOURCE_DESC, payload: payload }
-};
-
-export const updateFileId = (id) => {
-    return {
-        type: SET_FILE_ID, payload: { 'id': id }
-    };
-}
-
-export const updateTargetDescription = (targetObject) => {
-    return { type: UPDATE_TARGET_DESC, payload: targetObject }
 };
 
 
